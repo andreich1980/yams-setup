@@ -12,9 +12,10 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${MEDIA_DIRECTORY}:/data
       - ${INSTALL_DIRECTORY}/config/${MEDIA_SERVICE}:/config
-    ports: # plex
-      - 8096:8096 # plex
+    # ports:
+    #   - 8096:8096
     restart: unless-stopped
+    network_mode: service:tailscale
     # networks:
     #   yams_network:
     #     ipv4_address: 172.60.0.50
@@ -35,23 +36,6 @@ services:
     ports: # qbittorrent
       - 8081:8081 # qbittorrent
     # network_mode: "service:gluetun"
-
-  # SABnzbd is used to download from usenet
-  sabnzbd:
-    image: lscr.io/linuxserver/sabnzbd:latest
-    container_name: sabnzbd
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=America/Montevideo
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ${MEDIA_DIRECTORY}:/data
-      - ${INSTALL_DIRECTORY}/config/sabnzbd:/config
-    ports: # sabnzbd
-      - 8080:8080 # sabnzbd
-    restart: unless-stopped
-    #network_mode: "service:gluetun"
 
   # Sonarr is used to query, add downloads to the download queue and index TV shows
   # https://sonarr.tv/
@@ -90,25 +74,6 @@ services:
     networks:
       yams_network:
         ipv4_address: 172.60.0.14
-
-  # Lidarr is used to query, add downloads to the download queue and index Music
-  # https://lidarr.audio/
-  lidarr:
-    image: lscr.io/linuxserver/lidarr
-    container_name: lidarr
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ${MEDIA_DIRECTORY}:/data
-      - ${INSTALL_DIRECTORY}/config/lidarr:/config
-    ports:
-      - 8686:8686
-    restart: unless-stopped
-    networks:
-      yams_network:
-        ipv4_address: 172.60.0.15
 
   # Bazarr is used to download and categorize subtitles
   # https://www.bazarr.media/
