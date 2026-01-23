@@ -4,22 +4,6 @@ networks:
     name: yams_network
 
 services:
-  audiobookshelf:
-    image: ghcr.io/advplyr/audiobookshelf:latest
-    container_name: audiobookshelf
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=Europe/Moscow
-    volumes:
-      - ${INSTALL_DIRECTORY}/config/audiobookshelf:/config
-      - ${MEDIA_DIRECTORY}/audiobooks:/audiobooks
-      - ${MEDIA_DIRECTORY}/podcasts:/podcasts
-      - ${INSTALL_DIRECTORY}/metadata/audiobookshelf:/metadata
-    ports:
-      - 13378:80
-    restart: unless-stopped
-
   tailscale:
     image: tailscale/tailscale:latest
     container_name: tailscale
@@ -41,3 +25,19 @@ services:
     # Jellyfin ports are here, instead of its container, so it works via local network
     ports:
       - 8096:8096
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Moscow
+    volumes:
+      - ${INSTALL_DIRECTORY}/config/audiobookshelf:/config
+      - ${MEDIA_DIRECTORY}/audiobooks:/audiobooks
+      - ${MEDIA_DIRECTORY}/podcasts:/podcasts
+      - ${INSTALL_DIRECTORY}/metadata/audiobookshelf:/metadata
+    ports:
+      - 13378:80
+    restart: unless-stopped
