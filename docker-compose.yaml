@@ -36,6 +36,8 @@ services:
     ports: # qbittorrent
       - 8081:8081 # qbittorrent
     # network_mode: "service:gluetun"
+    networks:
+      - ts-hub-net
 
   # Sonarr is used to query, add downloads to the download queue and index TV shows
   # https://sonarr.tv/
@@ -53,8 +55,7 @@ services:
       - 8989:8989
     restart: unless-stopped
     networks:
-      yams_network:
-        ipv4_address: 172.60.0.13
+      - ts-hub-net
 
   # Radarr is used to query, add downloads to the download queue and index Movies
   # https://radarr.video/
@@ -72,8 +73,7 @@ services:
       - 7878:7878
     restart: unless-stopped
     networks:
-      yams_network:
-        ipv4_address: 172.60.0.14
+      - ts-hub-net
 
   # Bazarr is used to download and categorize subtitles
   # https://www.bazarr.media/
@@ -110,8 +110,7 @@ services:
     # network_mode: "service:gluetun"
     restart: unless-stopped
     networks:
-      yams_network:
-        ipv4_address: 172.60.0.17
+      - ts-hub-net
 
   # Gluetun is our VPN, so you can download torrents safely
   gluetun:

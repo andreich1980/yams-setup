@@ -2,6 +2,11 @@ networks:
   default:
     external: true
     name: yams_network
+  ts-hub-net:
+    driver: bridge
+
+volumes:
+  ts-socket-hub:
 
 services:
   tailscale:
@@ -41,3 +46,40 @@ services:
     ports:
       - 13378:80
     restart: unless-stopped
+
+  # TS hub for reverse proxying services like sornarr/radarr/etc.
+  tailscale-hub:
+    image: tailscale/tailscale:latest
+    container_name: tailscale-hub
+    hostname: media
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=true
+      - TS_SOCKET=/var/run/tailscale/tailscaled.sock
+      - TZ=Europe/Moscow
+    volumes:
+      - ${INSTALL_DIRECTORY}/config/tailscale/hub:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+      - ts-socket-hub:/var/run/tailscale # for Caddy to read the socket
+    cap_add: [NET_ADMIN, NET_RAW]
+    networks:
+      - ts-hub-net
+    restart: unless-stopped
+
+  # Reverse proxy for the TS hub
+  caddy-hub:
+    image: caddy:latest
+    container_name: caddy-hub
+    restart: unless-stopped
+    network_mode: service:tailscale-hub
+    depends_on:
+      - tailscale-hub
+    volumes:
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${INSTALL_DIRECTORY}/config/caddy/data:/data
+      - ts-socket-hub:/var/run/tailscale # Read the TS socket
+    environment:
+      - CADDY_DOCKER_PROXY_URL=/var/run/tailscale/tailscaled.sock

@@ -1,0 +1,34 @@
+{
+    admin off
+}
+
+media.tilapia-smelt.ts.net {
+    tls {
+        get_certificate tailscale
+    }
+
+    handle /sonarr* {
+        reverse_proxy sonarr:8989
+    }
+
+    handle /radarr* {
+        reverse_proxy radarr:7878
+    }
+
+    handle /prowlarr* {
+        reverse_proxy prowlarr:9696
+    }
+
+    handle {
+        respond ":)"
+    }
+}
+
+# qbittorrent does not have base URL settings, access via port
+media.tilapia-smelt.ts.net:8081 {
+    tls {
+        get_certificate tailscale
+    }
+
+    reverse_proxy qbittorrent:8081
+}
