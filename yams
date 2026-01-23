@@ -26,6 +26,7 @@ declare -A COMMANDS=(
     ["restart"]="restarts yams services (can specify service names)"
     ["stop"]="stops all yams services (can specify service names)"
     ["start"]="starts yams services (can specify service names)"
+    ["status"]="checks yams services status"
     ["destroy"]="destroy yams services so you can start from scratch (can specify service names)"
     ["check-vpn"]="checks if the VPN is working as expected"
     ["backup"]="backs up yams to the destination location"
@@ -240,6 +241,10 @@ stop_yams() {
     log_success "Services stopped successfully"
 }
 
+check_yams() {
+    $DC ps || log_error "Failed to check services"
+}
+
 main() {
     local command=${1:-"--help"}
     local destination=${2:-.}
@@ -261,6 +266,9 @@ main() {
             ;;
         start)
             start_yams "${@:2}"
+            ;;
+        status)
+            check_yams
             ;;
         check-vpn)
             check_vpn
