@@ -9,6 +9,21 @@ volumes:
   ts-socket-hub:
 
 services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - HOMEPAGE_ALLOWED_HOSTS=192.168.68.114,media.tilapia-smelt.ts.net
+    volumes:
+      - ${INSTALL_DIRECTORY}/config/homepage:/app/config
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    networks:
+      - ts-hub-net
+
   tailscale:
     image: tailscale/tailscale:latest
     container_name: tailscale
@@ -64,6 +79,8 @@ services:
       - ${INSTALL_DIRECTORY}/config/tailscale/hub:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
       - ts-socket-hub:/var/run/tailscale # for Caddy to read the socket
+    ports:
+      - 80:80
     cap_add: [NET_ADMIN, NET_RAW]
     networks:
       - ts-hub-net

@@ -4,4 +4,5 @@
 .env
 config
 !config/caddy/Caddyfile
+!config/homepage/{services.yaml,settings.yaml}
 metadata

@@ -1,0 +1,20 @@
+- Media Server:
+    - Sonarr:
+        icon: sonarr.png
+        href: /sonarr/
+        description: TV Shows
+
+    - Radarr:
+        icon: radarr.png
+        href: /radarr/
+        description: Movies
+
+    - qBittorrent:
+        icon: qbittorrent.png
+        href: :8081
+        description: Downloads
+
+    - Prowlarr:
+        icon: prowlarr.png
+        href: /prowlarr/
+        description: Indexers

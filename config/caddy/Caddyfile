@@ -2,11 +2,8 @@
     admin off
 }
 
-media.tilapia-smelt.ts.net {
-    tls {
-        get_certificate tailscale
-    }
-
+# Routes definition template
+(hub_routes) {
     handle /sonarr* {
         reverse_proxy sonarr:8989
     }
@@ -19,9 +16,27 @@ media.tilapia-smelt.ts.net {
         reverse_proxy prowlarr:9696
     }
 
-    handle {
-        respond ":)"
+    # Hack for qbittorrent to work with port (redirect from `host/:8081` to `host:8081`)
+    handle /:8081 {
+        redir http://{host}:8081 permanent
     }
+
+    handle {
+        reverse_proxy homepage:3000
+    }
+}
+
+media.tilapia-smelt.ts.net {
+    tls {
+        get_certificate tailscale
+    }
+
+    import hub_routes
+}
+
+# This allows access via http://192.168.x.x without port
+:80 {
+    import hub_routes
 }
 
 # qbittorrent does not have base URL settings, access via port

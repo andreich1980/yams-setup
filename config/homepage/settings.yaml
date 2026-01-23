@@ -1,0 +1,7 @@
+title: Media Server
+language: ru
+headerStyle: clean
+layout:
+  Media Server:
+    style: row
+    columns: 4
