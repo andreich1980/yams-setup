@@ -3,7 +3,6 @@ services:
   jellyfin:
     image: lscr.io/linuxserver/${MEDIA_SERVICE}
     container_name: ${MEDIA_SERVICE}
-    #network_mode: host # plex
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -12,13 +11,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${MEDIA_DIRECTORY}:/data
       - ${INSTALL_DIRECTORY}/config/${MEDIA_SERVICE}:/config
-    # ports:
-    #   - 8096:8096
     restart: unless-stopped
-    network_mode: service:tailscale
-    # networks:
-    #   yams_network:
-    #     ipv4_address: 172.60.0.50
+    network_mode: service:jellyfin-tailscale
 
   # qBitorrent is used to download torrents
   qbittorrent:

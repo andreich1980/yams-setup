@@ -24,27 +24,28 @@ services:
     networks:
       - ts-hub-net
 
-  tailscale:
+  jellyfin-tailscale:
     image: tailscale/tailscale:latest
-    container_name: tailscale
-    hostname: jellyfin-server # name for TailScale
+    container_name: jellyfin-tailscale
+    hostname: cinema # name for TailScale URL
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
       - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SERVE_CONFIG=/config/serve.json
       - TS_USERSPACE=true
       - TZ=Europe/Moscow
     volumes:
-      - ${INSTALL_DIRECTORY}/config/tailscale/tailscale-data:/var/lib/tailscale # to use the same IP
+      - ${INSTALL_DIRECTORY}/config/tailscale/tailscale-data/jellyfin:/var/lib/tailscale # to use the same IP
+      - ${INSTALL_DIRECTORY}/config/tailscale/sidecars/jellyfin.json:/config/serve.json:ro
       - /dev/net/tun:/dev/net/tun # for VPN to work inside the container
+    ports:
+      - 8096:8096 # Port for local access
     cap_add:
       - NET_ADMIN
       - NET_RAW
     restart: unless-stopped
-    # Jellyfin ports are here, instead of its container, so it works via local network
-    ports:
-      - 8096:8096
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest
