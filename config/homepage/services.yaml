@@ -1,4 +1,13 @@
-- Media Server:
+- Entertainment:
+    - Cinema:
+        icon: jellyfin.png
+        href: :8096
+        description: Movies & TV Shows
+    - Books:
+        icon: audiobookshelf.png
+        href: :13378
+        description: Audiobooks
+- Backstage:
     - Sonarr:
         icon: sonarr.png
         href: /sonarr/
