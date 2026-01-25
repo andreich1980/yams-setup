@@ -60,7 +60,10 @@ services:
       - ${MEDIA_DIRECTORY}/podcasts:/podcasts
       - ${INSTALL_DIRECTORY}/metadata/audiobookshelf:/metadata
     ports:
-      - 13378:80
+      - 13378:80 # Port for local access
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
     restart: unless-stopped
 
   # TS hub for reverse proxying services like sornarr/radarr/etc.
