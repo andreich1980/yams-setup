@@ -1,8 +1,12 @@
 - Entertainment:
-    - Cinema:
+    - Cinema [Local]:
         icon: jellyfin.png
         href: :8096
-        description: Movies & TV Shows
+        description: Movies & TV Shows (via Local Network)
+    - Cinema [Internet]:
+        icon: jellyfin.png
+        href: https://cinema.tilapia-smelt.ts.net
+        description: Movies & TV Shows (via Internet)
     - Books:
         icon: audiobookshelf.png
         href: :13378
