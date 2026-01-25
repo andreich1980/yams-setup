@@ -4,6 +4,12 @@
 
 # Routes definition template
 (hub_routes) {
+    # Hack to work with port (redirect from `host/:8081` to `host:8081`)
+    @fixPort path_regexp p ^/:([0-9]{1,5})(.*)
+    handle @fixPort {
+        redir http://{host}:{re.p.1}{re.p.2} permanent
+    }
+
     handle /sonarr* {
         reverse_proxy sonarr:8989
     }
@@ -14,11 +20,6 @@
 
     handle /prowlarr* {
         reverse_proxy prowlarr:9696
-    }
-
-    # Hack for qbittorrent to work with port (redirect from `host/:8081` to `host:8081`)
-    handle /:8081 {
-        redir http://{host}:8081 permanent
     }
 
     handle {
