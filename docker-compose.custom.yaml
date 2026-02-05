@@ -59,6 +59,30 @@ services:
       - ${MEDIA_DIRECTORY}/audiobooks:/audiobooks
       - ${MEDIA_DIRECTORY}/podcasts:/podcasts
       - ${INSTALL_DIRECTORY}/metadata/audiobookshelf:/metadata
+    # ports:
+    #   - 13378:80 # Port for local access
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    restart: unless-stopped
+    network_mode: service:audiobookshelf-tailscale
+
+  audiobookshelf-tailscale:
+    image: tailscale/tailscale:latest
+    container_name: audiobookshelf-tailscale
+    hostname: books # name for TailScale URL
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SERVE_CONFIG=/config/serve.json
+      - TS_USERSPACE=true
+      - TZ=Europe/Moscow
+    volumes:
+      - ${INSTALL_DIRECTORY}/config/tailscale/tailscale-data/audiobookshelf:/var/lib/tailscale
+      - ${INSTALL_DIRECTORY}/config/tailscale/sidecars/audiobookshelf.json:/config/serve.json:ro
+      - /dev/net/tun:/dev/net/tun
     ports:
       - 13378:80 # Port for local access
     cap_add:

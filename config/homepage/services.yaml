@@ -7,10 +7,14 @@
         icon: jellyfin.png
         href: https://cinema.tilapia-smelt.ts.net
         description: Movies & TV Shows (via Internet)
-    - Books:
+    - Books [Local]:
         icon: audiobookshelf.png
         href: :13378
-        description: Audiobooks
+        description: Audiobooks (via Local Network)
+    - Books [Internet]:
+        icon: audiobookshelf.png
+        href: https://books.tilapia-smelt.ts.net
+        description: Audiobooks (via Internet)
 - Backstage:
     - Sonarr:
         icon: sonarr.png
