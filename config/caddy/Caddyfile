@@ -7,7 +7,7 @@
     # Hack to work with port (redirect from `host/:8081` to `host:8081`)
     @fixPort path_regexp p ^/:([0-9]{1,5})(.*)
     handle @fixPort {
-        redir http://{host}:{re.p.1}{re.p.2} permanent
+        redir {scheme}://{host}:{re.p.1}{re.p.2} permanent
     }
 
     handle /sonarr* {
