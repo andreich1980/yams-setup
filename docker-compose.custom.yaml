@@ -90,6 +90,47 @@ services:
       - NET_RAW
     restart: unless-stopped
 
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v3.10.2
+    container_name: mealie
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Europe/Moscow
+      - ALLOW_SIGNUP=false
+      - BASE_URL=192.168.68.114:9925,https://food.tilapia-smelt.ts.net/
+    volumes:
+      - ${INSTALL_DIRECTORY}/config/mealie:/app/data
+    network_mode: service:mealie-tailscale
+    deploy:
+      resources:
+        limits:
+          memory: 1000M
+
+  mealie-tailscale:
+    image: tailscale/tailscale:latest
+    container_name: mealie-tailscale
+    hostname: food # name for TailScale URL
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SERVE_CONFIG=/config/serve.json
+      - TS_USERSPACE=true
+      - TZ=Europe/Moscow
+    volumes:
+      - ${INSTALL_DIRECTORY}/config/tailscale/tailscale-data/mealie:/var/lib/tailscale
+      - ${INSTALL_DIRECTORY}/config/tailscale/sidecars/mealie.json:/config/serve.json:ro
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 9925:9000 # Port for local access
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    restart: unless-stopped
+
   # TS hub for reverse proxying services like sornarr/radarr/etc.
   tailscale-hub:
     image: tailscale/tailscale:latest

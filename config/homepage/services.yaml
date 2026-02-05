@@ -15,6 +15,14 @@
         icon: audiobookshelf.png
         href: https://books.tilapia-smelt.ts.net
         description: Audiobooks (via Internet)
+    - Food & Recipes [Local]:
+        icon: mealie.png
+        href: :9925
+        description: Recipe Management (via Local Network)
+    - Food & Recipes [Internet]:
+        icon: mealie.png
+        href: https://food.tilapia-smelt.ts.net
+        description: Recipe Management (via Internet)
 - Backstage:
     - Sonarr:
         icon: sonarr.png
