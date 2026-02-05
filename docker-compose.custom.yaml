@@ -123,7 +123,7 @@ services:
     depends_on:
       - tailscale-hub
     volumes:
-      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${INSTALL_DIRECTORY}/config/caddy/Caddyfile:/etc/caddy/Caddyfile
       - ${INSTALL_DIRECTORY}/config/caddy/data:/data
       - ts-socket-hub:/var/run/tailscale # Read the TS socket
     environment:
