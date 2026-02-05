@@ -85,8 +85,7 @@ services:
       - 6767:6767
     restart: unless-stopped
     networks:
-      yams_network:
-        ipv4_address: 172.60.0.16
+      - ts-hub-net
 
   # Prowlarr is our torrent indexer/searcher. Sonarr/Radarr use Prowlarr as a source
   # https://prowlarr.com/

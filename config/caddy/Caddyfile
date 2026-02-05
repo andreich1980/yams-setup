@@ -18,6 +18,10 @@
         reverse_proxy radarr:7878
     }
 
+    handle /bazarr* {
+        reverse_proxy bazarr:6767
+    }
+
     handle /prowlarr* {
         reverse_proxy prowlarr:9696
     }

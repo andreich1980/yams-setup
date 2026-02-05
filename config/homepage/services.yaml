@@ -35,3 +35,8 @@
         icon: prowlarr.png
         href: /prowlarr/
         description: Indexers
+
+    - Bazarr:
+        icon: bazarr.png
+        href: /bazarr/
+        description: Subtitles
