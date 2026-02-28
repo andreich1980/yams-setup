@@ -100,6 +100,9 @@ services:
       - TZ=Europe/Moscow
       - ALLOW_SIGNUP=false
       - BASE_URL=192.168.68.114:9925,https://food.tilapia-smelt.ts.net/
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - OPENAI_MODEL=${OPENAI_MODEL}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     volumes:
       - ${INSTALL_DIRECTORY}/config/mealie:/app/data
     network_mode: service:mealie-tailscale
