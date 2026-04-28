@@ -4,6 +4,9 @@ networks:
     name: yams_network
   ts-hub-net:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.24.1.0/24
 
 volumes:
   ts-socket-hub:
