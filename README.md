@@ -16,15 +16,8 @@ A clean, consolidated media server stack based on Docker Compose, featuring Tail
 
 ## Setup Instructions
 
-1. **Clone the Repository**:
-
-   ```bash
-   git clone https://github.com/andreich1980/media-server
-   cd media-server
-   ```
-
-2. **Directory Preparation**:
-   This project is designed to live in `/opt/media-server` with media in `/srv/media`. Create them:
+1. **Directory Preparation**:
+   This project is designed to live in `/opt/media-server` with media in `/srv/media`. Create them and set permissions:
 
    ```bash
    # Create project home
@@ -36,22 +29,22 @@ A clean, consolidated media server stack based on Docker Compose, featuring Tail
    sudo chown -R $USER:$USER /srv/media
    ```
 
-3. **Project Placement**:
-   Move the contents of the cloned repository to `/opt/media-server`:
+2. **Clone the Repository**:
+   Clone directly into the project directory:
 
    ```bash
-   cp -r . /opt/media-server/
+   git clone https://github.com/andreich1980/media-server /opt/media-server
    cd /opt/media-server
    ```
 
-4. **Environment Configuration**:
+3. **Environment Configuration**:
    - Copy `.env.example` to `.env`.
    - Update `TS_DOMAIN` with your Tailscale domain (e.g., `your-name.ts.net`).
    - Update `LOCAL_IP` with your server's local IP.
    - Add your `TAILSCALE_AUTH_KEY`.
    - Update `PUID` and `PGID` to match your user (run `id` to check).
 
-5. **Manual Service Tweaks**:
+4. **Manual Service Tweaks**:
    - **Configuration Templates**: Generate config files from templates (`Caddyfile`, `services.yaml`, Tailscale sidecars) and replace the domain.
 
      **Bash/Zsh:**
@@ -77,8 +70,7 @@ A clean, consolidated media server stack based on Docker Compose, featuring Tail
    - **Base URLs**: Set "URL Base" in Sonarr/Radarr/etc. settings to match Caddy (e.g., `/sonarr`).
    - **Socket Permissions**: If SSL fails, ensure `config/tailscale/hub/tailscaled.sock` is readable by Caddy.
 
-6. **Initialize Stack**:
-
+5. **Initialize Stack**:
    ```bash
    docker compose up -d
    ```
