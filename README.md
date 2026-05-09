@@ -81,7 +81,30 @@ A clean, consolidated media server stack based on Docker Compose, featuring Tail
    docker compose up -d
    ```
 
-7. **Service Accessibility**:
+## Migrating Existing Data
+
+If you are migrating from an existing server (e.g., YAMS) or moving to a new machine, follow these steps **before** running `docker compose up`:
+
+1. **Stop Old Services**: Shut down your existing media server to prevent port conflicts and file locks.
+2. **Remote Preparation**: On the source server, ensure your user owns the files so they can be read over SSH:
+   ```bash
+   sudo chown -R $USER:$USER /opt/yams /srv/media
+   ```
+3. **Transfer Data (Pulling to Local)**:
+   Run these from your local project directory. Use `--no-g --no-o` to avoid "Operation not permitted" errors:
+   ```bash
+   # Sync project config (exclude git, env, and the old management script)
+   sudo rsync -rlt --no-g --no-o --exclude '.git' --exclude '.env' --exclude 'yams' media:/opt/yams/ .
+
+   # Sync media
+   sudo rsync -rlt --no-g --no-o media:/srv/media/ /srv/media/
+   ```
+4. **Fix Local Permissions**: Ensure your local user owns the migrated files:
+   ```bash
+   sudo chown -R $USER:$USER /opt/media-server /srv/media
+   ```
+
+## Service Accessibility
    - **Local Dashboard**: `http://localhost/` or `http://<LOCAL_IP>/`
    - **Remote Access**: `https://media.<your-domain>.ts.net`
 
