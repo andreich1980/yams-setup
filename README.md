@@ -20,8 +20,8 @@ A clean, consolidated media server stack based on Docker Compose, featuring Tail
    This project is designed to live in `/opt/media-server` with media in `/srv/media`. Create them and set permissions:
 
    ```bash
-   # Create project home
-   sudo mkdir -p /opt/media-server
+   # Create project home and metadata subdirectories
+   sudo mkdir -p /opt/media-server/metadata/audiobookshelf
    sudo chown -R $USER:$USER /opt/media-server
 
    # Create media home
