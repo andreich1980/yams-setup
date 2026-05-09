@@ -1,0 +1,54 @@
+{
+    admin off
+}
+
+# Routes definition template
+(hub_routes) {
+    # Hack to work with port (redirect from `host/:8081` to `host:8081`)
+    @fixPort path_regexp p ^/:([0-9]{1,5})(.*)
+    handle @fixPort {
+        redir {scheme}://{host}:{re.p.1}{re.p.2} permanent
+    }
+
+    handle /sonarr* {
+        reverse_proxy sonarr:8989
+    }
+
+    handle /radarr* {
+        reverse_proxy radarr:7878
+    }
+
+    handle /bazarr* {
+        reverse_proxy bazarr:6767
+    }
+
+    handle /prowlarr* {
+        reverse_proxy prowlarr:9696
+    }
+
+    handle {
+        reverse_proxy homepage:3000
+    }
+}
+
+media.${TS_DOMAIN} {
+    tls {
+        get_certificate tailscale
+    }
+
+    import hub_routes
+}
+
+# This allows access via http://192.168.x.x without port
+:80 {
+    import hub_routes
+}
+
+# qbittorrent does not have base URL settings, access via port
+media.${TS_DOMAIN}:8081 {
+    tls {
+        get_certificate tailscale
+    }
+
+    reverse_proxy qbittorrent:8081
+}

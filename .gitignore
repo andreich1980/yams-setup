@@ -2,10 +2,28 @@
 .idea
 
 .env
-config
-!config/caddy/Caddyfile
-!config/homepage/{services.yaml,settings.yaml}
 metadata
-!config/tailscale/sidecars/*.json.template
-!config/caddy/Caddyfile.template
-!config/homepage/services.yaml.template
+
+# Ignore all contents of config by default
+config/**
+
+# Allow all directories in config so we can find templates
+!config/**/
+
+# Track all template files
+!config/**/*.template
+
+# Track specific required config files
+!config/homepage/settings.yaml
+!config/homepage/bookmarks.yaml
+!config/homepage/widgets.yaml
+!config/homepage/kubernetes.yaml
+!config/homepage/docker.yaml
+!config/homepage/proxmox.yaml
+!config/homepage/custom.css
+!config/homepage/custom.js
+
+# Specifically ignore the generated files that were previously tracked
+config/caddy/Caddyfile
+config/homepage/services.yaml
+config/tailscale/sidecars/*.json
