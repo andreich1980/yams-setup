@@ -19,8 +19,8 @@ A clean, consolidated media server stack based on Docker Compose, featuring Tail
 1. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/your-username/yams-setup.git
-   cd yams-setup
+   git clone https://github.com/andreich1980/media-server
+   cd media-server
    ```
 
 2. **Directory Preparation**:
@@ -51,10 +51,11 @@ A clean, consolidated media server stack based on Docker Compose, featuring Tail
    - Add your `TAILSCALE_AUTH_KEY`.
    - Update `PUID` and `PGID` to match your user (run `id` to check).
 
-4. **Manual Service Tweaks**:
+5. **Manual Service Tweaks**:
    - **Configuration Templates**: Generate config files from templates (`Caddyfile`, `services.yaml`, Tailscale sidecars) and replace the domain.
 
      **Bash/Zsh:**
+
      ```bash
      export TS_DOMAIN=$(grep TS_DOMAIN .env | cut -d '=' -f2)
      # Process all .template files
@@ -64,13 +65,12 @@ A clean, consolidated media server stack based on Docker Compose, featuring Tail
      ```
 
      **Fish:**
+
      ```fish
      set TS_DOMAIN (grep TS_DOMAIN .env | cut -d '=' -f2)
      # Process all .template files
      for f in (find config -name "*.template")
        sed "s/\${TS_DOMAIN}/$TS_DOMAIN/g" "$f" > (string replace ".template" "" $f)
-     end
-     ```
      end
      ```
 
@@ -90,21 +90,25 @@ If you are migrating from an existing server (e.g., YAMS), follow these steps to
 1. **Stop Services**:
    - **On Remote**: Shut down your existing media server to prevent file locks.
    - **On Local**: If you already ran `docker compose up`, stop it now: `docker compose stop`.
+
 2. **Transfer Data (Safe Approach)**:
    To avoid SSH/Sudo permission issues, sync the data to a temporary folder as your normal user first:
+
    ```bash
    # From your local project root:
    mkdir -p config_tmp metadata_tmp
-   
+
    # Sync application data (skip Tailscale/Caddy state which are root-owned)
    rsync -qav --exclude 'tailscale' --exclude 'caddy/data' media:/opt/yams/config/ ./config_tmp/
    rsync -qav media:/opt/yams/metadata/ ./metadata_tmp/
-   
+
    # Sync media (use -H to preserve hardlinks if you are seeding torrents)
    rsync -qavH media:/srv/media/ /srv/media/
    ```
+
 3. **Merge and Fix Permissions**:
    Move the temporary data into your project and restore ownership so Docker can use it:
+
    ```bash
    # Move contents to real folders
    sudo cp -rv ./config_tmp/* ./config/
@@ -116,12 +120,14 @@ If you are migrating from an existing server (e.g., YAMS), follow these steps to
    # Cleanup
    rm -rf ./config_tmp ./metadata_tmp
    ```
+
 4. **Service Tweaks**:
    For services behind the hub (Sonarr, Radarr, etc.), ensure the "URL Base" is set in the service's internal `config.xml` (e.g., `<UrlBase>/sonarr</UrlBase>`) before starting.
 
 ## Service Accessibility
-   - **Local Dashboard**: `http://localhost/` or `http://<LOCAL_IP>/`
-   - **Remote Access**: `https://media.<your-domain>.ts.net`
+
+- **Local Dashboard**: `http://localhost/` or `http://<LOCAL_IP>/`
+- **Remote Access**: `https://media.<your-domain>.ts.net`
 
 ## Maintenance
 
