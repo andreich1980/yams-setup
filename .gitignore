@@ -6,3 +6,4 @@ config
 !config/caddy/Caddyfile
 !config/homepage/{services.yaml,settings.yaml}
 metadata
+!config/tailscale/sidecars/*.json.template
