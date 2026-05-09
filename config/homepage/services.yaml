@@ -5,7 +5,7 @@
         description: Movies & TV Shows (via Local Network)
     - Cinema [Internet]:
         icon: jellyfin.png
-        href: https://cinema.tilapia-smelt.ts.net
+        href: https://cinema.{{HOMEPAGE_VAR_TS_DOMAIN}}
         description: Movies & TV Shows (via Internet)
     - Books [Local]:
         icon: audiobookshelf.png
@@ -13,7 +13,7 @@
         description: Audiobooks (via Local Network)
     - Books [Internet]:
         icon: audiobookshelf.png
-        href: https://books.tilapia-smelt.ts.net
+        href: https://books.{{HOMEPAGE_VAR_TS_DOMAIN}}
         description: Audiobooks (via Internet)
     - Food & Recipes [Local]:
         icon: mealie.png
@@ -21,7 +21,7 @@
         description: Recipe Management (via Local Network)
     - Food & Recipes [Internet]:
         icon: mealie.png
-        href: https://food.tilapia-smelt.ts.net
+        href: https://food.{{HOMEPAGE_VAR_TS_DOMAIN}}
         description: Recipe Management (via Internet)
 - Backstage:
     - Sonarr:

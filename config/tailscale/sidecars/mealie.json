@@ -5,7 +5,7 @@
         }
     },
     "Web": {
-        "food.tilapia-smelt.ts.net:443": {
+        "food.${TS_DOMAIN}:443": {
             "Handlers": {
                 "/": {
                     "Proxy": "http://127.0.0.1:9000"

@@ -1,0 +1,7 @@
+{
+  "workflow": "standard",
+  "research": "deep",
+  "migration": true,
+  "stack": "docker-compose",
+  "tailscale": "consolidated"
+}
