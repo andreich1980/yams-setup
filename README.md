@@ -90,7 +90,7 @@ If you are migrating from an existing server (e.g., YAMS), follow these steps to
    # From your local project root:
    mkdir -p config_tmp metadata_tmp
 
-   # Sync application data (skip Tailscale/Caddy state which are root-owned)
+   # Sync application data (skip Tailscale/Caddy state which are now named volumes)
    rsync -qav --exclude 'tailscale' --exclude 'caddy/data' media:/opt/yams/config/ ./config_tmp/
    rsync -qav media:/opt/yams/metadata/ ./metadata_tmp/
 

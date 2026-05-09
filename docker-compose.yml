@@ -13,7 +13,7 @@ services:
       - TS_SOCKET=/var/run/tailscale/tailscaled.sock
       - TZ=Europe/Moscow
     volumes:
-      - ./config/tailscale/hub:/var/lib/tailscale
+      - ts_hub_data:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
       - ts-socket-hub:/var/run/tailscale
     ports:
@@ -68,7 +68,7 @@ services:
       - TS_USERSPACE=true
       - TZ=Europe/Moscow
     volumes:
-      - ./config/tailscale/tailscale-data/jellyfin:/var/lib/tailscale
+      - ts_jellyfin_data:/var/lib/tailscale
       - ./config/tailscale/sidecars/jellyfin.json:/config/serve.json:ro
       - /dev/net/tun:/dev/net/tun
     ports:
@@ -105,7 +105,7 @@ services:
       - TS_USERSPACE=true
       - TZ=Europe/Moscow
     volumes:
-      - ./config/tailscale/tailscale-data/audiobookshelf:/var/lib/tailscale
+      - ts_books_data:/var/lib/tailscale
       - ./config/tailscale/sidecars/audiobookshelf.json:/config/serve.json:ro
       - /dev/net/tun:/dev/net/tun
     ports:
@@ -147,7 +147,7 @@ services:
       - TS_USERSPACE=true
       - TZ=Europe/Moscow
     volumes:
-      - ./config/tailscale/tailscale-data/mealie:/var/lib/tailscale
+      - ts_food_data:/var/lib/tailscale
       - ./config/tailscale/sidecars/mealie.json:/config/serve.json:ro
       - /dev/net/tun:/dev/net/tun
     ports:
@@ -278,5 +278,9 @@ networks:
 
 volumes:
   ts-socket-hub:
+  ts_hub_data:
+  ts_jellyfin_data:
+  ts_books_data:
+  ts_food_data:
   caddy_data:
   caddy_config:
