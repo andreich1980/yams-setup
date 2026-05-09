@@ -7,3 +7,5 @@ config
 !config/homepage/{services.yaml,settings.yaml}
 metadata
 !config/tailscale/sidecars/*.json.template
+!config/caddy/Caddyfile.template
+!config/homepage/services.yaml.template

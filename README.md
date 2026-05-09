@@ -51,24 +51,26 @@ A clean, consolidated media server stack based on Docker Compose, featuring Tail
    - Add your `TAILSCALE_AUTH_KEY`.
    - Update `PUID` and `PGID` to match your user (run `id` to check).
 
-5. **Manual Service Tweaks**:
-   - **Tailscale Sidecars**: Generate config files from templates and replace the domain.
+4. **Manual Service Tweaks**:
+   - **Configuration Templates**: Generate config files from templates (`Caddyfile`, `services.yaml`, Tailscale sidecars) and replace the domain.
 
      **Bash/Zsh:**
-
      ```bash
      export TS_DOMAIN=$(grep TS_DOMAIN .env | cut -d '=' -f2)
-     for f in config/tailscale/sidecars/*.json.template; do
+     # Process all .template files
+     find config -name "*.template" | while read f; do
        sed "s/\${TS_DOMAIN}/$TS_DOMAIN/g" "$f" > "${f%.template}"
      done
      ```
 
      **Fish:**
-
      ```fish
      set TS_DOMAIN (grep TS_DOMAIN .env | cut -d '=' -f2)
-     for f in config/tailscale/sidecars/*.json.template
+     # Process all .template files
+     for f in (find config -name "*.template")
        sed "s/\${TS_DOMAIN}/$TS_DOMAIN/g" "$f" > (string replace ".template" "" $f)
+     end
+     ```
      end
      ```
 
@@ -83,26 +85,39 @@ A clean, consolidated media server stack based on Docker Compose, featuring Tail
 
 ## Migrating Existing Data
 
-If you are migrating from an existing server (e.g., YAMS) or moving to a new machine, follow these steps **before** running `docker compose up`:
+If you are migrating from an existing server (e.g., YAMS), follow these steps to ensure your data and permissions stay intact.
 
-1. **Stop Old Services**: Shut down your existing media server to prevent port conflicts and file locks.
-2. **Remote Preparation**: On the source server, ensure your user owns the files so they can be read over SSH:
+1. **Stop Services**:
+   - **On Remote**: Shut down your existing media server to prevent file locks.
+   - **On Local**: If you already ran `docker compose up`, stop it now: `docker compose stop`.
+2. **Transfer Data (Safe Approach)**:
+   To avoid SSH/Sudo permission issues, sync the data to a temporary folder as your normal user first:
    ```bash
-   sudo chown -R $USER:$USER /opt/yams /srv/media
+   # From your local project root:
+   mkdir -p config_tmp metadata_tmp
+   
+   # Sync application data (skip Tailscale/Caddy state which are root-owned)
+   rsync -qav --exclude 'tailscale' --exclude 'caddy/data' media:/opt/yams/config/ ./config_tmp/
+   rsync -qav media:/opt/yams/metadata/ ./metadata_tmp/
+   
+   # Sync media (use -H to preserve hardlinks if you are seeding torrents)
+   rsync -qavH media:/srv/media/ /srv/media/
    ```
-3. **Transfer Data (Pulling to Local)**:
-   Run these from your local project directory. Use `--no-g --no-o` to avoid "Operation not permitted" errors:
+3. **Merge and Fix Permissions**:
+   Move the temporary data into your project and restore ownership so Docker can use it:
    ```bash
-   # Sync project config (exclude git, env, and the old management script)
-   sudo rsync -rlt --no-g --no-o --exclude '.git' --exclude '.env' --exclude 'yams' media:/opt/yams/ .
+   # Move contents to real folders
+   sudo cp -rv ./config_tmp/* ./config/
+   sudo cp -rv ./metadata_tmp/* ./metadata/
 
-   # Sync media
-   sudo rsync -rlt --no-g --no-o media:/srv/media/ /srv/media/
+   # Set ownership to your local user
+   sudo chown -R $USER:$USER ./config ./metadata /srv/media
+
+   # Cleanup
+   rm -rf ./config_tmp ./metadata_tmp
    ```
-4. **Fix Local Permissions**: Ensure your local user owns the migrated files:
-   ```bash
-   sudo chown -R $USER:$USER /opt/media-server /srv/media
-   ```
+4. **Service Tweaks**:
+   For services behind the hub (Sonarr, Radarr, etc.), ensure the "URL Base" is set in the service's internal `config.xml` (e.g., `<UrlBase>/sonarr</UrlBase>`) before starting.
 
 ## Service Accessibility
    - **Local Dashboard**: `http://localhost/` or `http://<LOCAL_IP>/`

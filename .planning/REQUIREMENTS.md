@@ -26,5 +26,5 @@
 
 ## Technical Details
 - **Base Network**: A single bridge network for internal communication.
-- **Tailscale Hostname**: `media.tilapia-smelt.ts.net` (or similar).
+- **Tailscale Hostname**: `media.${TS_DOMAIN}` (or similar).
 - **Caddy Config**: Consolidated Caddyfile with subdomain/path routing.
