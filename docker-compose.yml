@@ -32,7 +32,8 @@ services:
       - tailscale-hub
     volumes:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ./config/caddy/data:/data
+      - caddy_data:/data
+      - caddy_config:/config
       - ts-socket-hub:/var/run/tailscale
     environment:
       - CADDY_DOCKER_PROXY_URL=/var/run/tailscale/tailscaled.sock
@@ -277,3 +278,5 @@ networks:
 
 volumes:
   ts-socket-hub:
+  caddy_data:
+  caddy_config:
