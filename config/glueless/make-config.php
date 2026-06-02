@@ -32,10 +32,7 @@ if ($content === false) {
 
 // 3. Decode Base64 if necessary (some providers encode the whole list)
 if (strpos($content, 'vless://') === false) {
-    die('RESULT:' . substr($content,0,40));
-    echo substr($content, 40)."\n=========";
     $decoded = base64_decode(trim($content));
-    echo "$decoded\n=========";
     if ($decoded && strpos($decoded, 'vless://') !== false) {
         $content = $decoded;
         echo "🔓 Successfully decoded Base64 payload.\n";
