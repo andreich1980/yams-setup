@@ -23,6 +23,9 @@ config/**
 !config/homepage/custom.css
 !config/homepage/custom.js
 
+# Track glueless config files
+!config/glueless/*
+
 # Specifically ignore the generated files that were previously tracked
 config/caddy/Caddyfile
 config/homepage/services.yaml
