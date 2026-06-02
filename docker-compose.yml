@@ -155,6 +155,39 @@ services:
     cap_add: [NET_ADMIN, NET_RAW]
     restart: unless-stopped
 
+  # --- VPN Services ---
+  glueless-config-builder:
+    image: php:8.5-cli-alpine
+    container_name: glueless-config-builder
+    volumes:
+      - ./config/glueless:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /app
+    environment:
+      - SUB_URL=${VPN_SUB_URL}
+      - EXCLUDE_NODE_TAGS=${VPN_EXCLUDE_NODE_TAGS:-}
+      - UPDATE_INTERVAL=${VPN_UPDATE_INTERVAL:-3600}
+    command: sh -c "while true; do php make-config.php; sleep $${UPDATE_INTERVAL:-3600}; done"
+    restart: unless-stopped
+    networks:
+      - internal
+
+  glueless:
+    image: ghcr.io/f-normies/glueless:latest
+    container_name: glueless
+    cap_add:
+      - NET_ADMIN
+    volumes:
+      - ./config/glueless/hiddify-config.json:/hiddify/hiddify-config.json
+      - ./config/glueless/proxy-config.json:/hiddify/proxy-config.json
+    ports:
+      - 8989:8989
+      - 7878:7878
+      - 9696:9696
+    restart: unless-stopped
+    networks:
+      - internal
+
   # --- Arr Stack & Hub Services ---
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:4.6.3
@@ -185,11 +218,10 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${MEDIA_DIRECTORY}:/data
       - ./config/sonarr:/config
-    ports:
-      - 8989:8989
     restart: unless-stopped
-    networks:
-      - internal
+    network_mode: "service:glueless"
+    depends_on:
+      - glueless
 
   radarr:
     image: lscr.io/linuxserver/radarr
@@ -202,11 +234,10 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${MEDIA_DIRECTORY}:/data
       - ./config/radarr:/config
-    ports:
-      - 7878:7878
     restart: unless-stopped
-    networks:
-      - internal
+    network_mode: "service:glueless"
+    depends_on:
+      - glueless
 
   bazarr:
     image: lscr.io/linuxserver/bazarr
@@ -235,11 +266,10 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./config/prowlarr:/config
-    ports:
-      - 9696:9696
     restart: unless-stopped
-    networks:
-      - internal
+    network_mode: "service:glueless"
+    depends_on:
+      - glueless
 
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
