@@ -275,6 +275,7 @@ networks:
   internal:
     name: internal_network
     driver: bridge
+    enable_ipv6: false
 
 volumes:
   ts-socket-hub:
