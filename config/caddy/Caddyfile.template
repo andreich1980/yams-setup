@@ -31,7 +31,7 @@
     }
 }
 
-media.tilapia-smelt.ts.net {
+media.${TS_DOMAIN} {
     tls {
         get_certificate tailscale
     }
@@ -45,7 +45,7 @@ media.tilapia-smelt.ts.net {
 }
 
 # qbittorrent does not have base URL settings, access via port
-media.tilapia-smelt.ts.net:8081 {
+media.${TS_DOMAIN}:8081 {
     tls {
         get_certificate tailscale
     }
