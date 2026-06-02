@@ -238,13 +238,60 @@ file_put_contents(
 
 echo "✅ proxy-config.json successfully generated!\n";
 
-// 9. Restart glueless via Docker socket
-echo "🔄 Restarting glueless via Docker socket...\n";
+// 9. Restart glueless and dependent containers via Docker socket
+$containersToRestart = ['glueless'];
+$gluelessId = null;
+
 $fp = @stream_socket_client('unix:///var/run/docker.sock', $errno, $errstr);
 if ($fp) {
-    fwrite($fp, "POST /containers/glueless/restart HTTP/1.0\r\nHost: localhost\r\n\r\n");
+    fwrite($fp, "GET /containers/json HTTP/1.0\r\nHost: localhost\r\n\r\n");
+    $response = '';
+    while (!feof($fp)) {
+        $response .= fgets($fp, 4096);
+    }
     fclose($fp);
-    echo "✅ Glueless container restarted successfully!\n";
-} else {
-    echo "⚠️ Warning: Failed to restart glueless via socket. Error: $errstr\n";
+    
+    if (strpos($response, "\r\n\r\n") !== false) {
+        list($headers, $body) = explode("\r\n\r\n", $response, 2);
+        $containers = json_decode($body, true);
+        if (is_array($containers)) {
+            foreach ($containers as $c) {
+                if (!empty($c['Names']) && in_array('/glueless', $c['Names'])) {
+                    $gluelessId = $c['Id'];
+                    break;
+                }
+            }
+            
+            foreach ($containers as $c) {
+                if (isset($c['HostConfig']['NetworkMode'])) {
+                    $mode = $c['HostConfig']['NetworkMode'];
+                    if ($mode === 'container:glueless' || ($gluelessId && $mode === 'container:' . $gluelessId)) {
+                        $name = ltrim($c['Names'][0], '/');
+                        if (!in_array($name, $containersToRestart)) {
+                            $containersToRestart[] = $name;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+foreach ($containersToRestart as $container) {
+    echo "🔄 Restarting $container via Docker socket...\n";
+    $fp = @stream_socket_client('unix:///var/run/docker.sock', $errno, $errstr);
+    if ($fp) {
+        fwrite($fp, "POST /containers/$container/restart?t=5 HTTP/1.0\r\nHost: localhost\r\n\r\n");
+        while (!feof($fp)) {
+            fgets($fp, 128);
+        }
+        fclose($fp);
+        echo "✅ $container restarted successfully!\n";
+        
+        if ($container === 'glueless') {
+            sleep(3);
+        }
+    } else {
+        echo "⚠️ Warning: Failed to restart $container via socket. Error: $errstr\n";
+    }
 }
